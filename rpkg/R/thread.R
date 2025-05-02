@@ -41,11 +41,10 @@ get_thread_comments <- function(thread_id, token = twist_token()) {
 #' @return Path to the created file
 #' @export
 write_thread <- function(
-  thread,
-  token = twist_token(),
-  dir = ".",
-  timezone = "UTC"
-) {
+    thread,
+    token = twist_token(),
+    dir = ".",
+    timezone = "UTC") {
   if (is.numeric(thread) || is.character(thread)) {
     thread <- get_thread(thread, token)
   }
@@ -61,6 +60,7 @@ write_thread <- function(
     "title: '{thread$title}'",
     "author: {thread$creator_name} ({thread$creator})",
     "created: {posted_time}",
+    "timezone: {timezone}",
     "thread_id: {thread$id}",
     "channel_id: {thread$channel_id}",
     "last_updated_ts: {thread$last_updated_ts}",
@@ -132,4 +132,52 @@ read_yaml_header <- function(file, n_max = 20) {
     stop("Invalid markdown file format: no YAML header found.")
   }
   yaml_parsed
+}
+
+#' Update a thread file if it has been updated in Twist
+#'
+#' If the thread title has been updated, then the thread file will be renamed to match.
+#'
+#' @param path Path to the thread file
+#' @param token Authentication token
+#' @param force Logical. Whether to force rewriting even if timestamps indicate no update (default: FALSE)
+#' @param timezone Timezone for timestamps; if NULL, use timezone from existing thread file
+#'
+#' @return Path to updated file, or NULL if file not updated
+#' @export
+update_thread_file <- function(
+    path,
+    token = twist_token(),
+    force = FALSE,
+    timezone = NULL) {
+  # Extract required metadata from the file
+  yaml_data <- read_yaml_header(path)
+  thread_id <- yaml_data$thread_id
+  local_last_updated_ts <- yaml_data$last_updated_ts
+  # Get the current thread data from Twist
+  thread <- get_thread(thread_id, token)
+  twist_last_updated_ts <- thread$last_updated_ts
+  # Compare timestamps to see if an update is needed
+  needs_update <- force || (twist_last_updated_ts > local_last_updated_ts)
+
+  if (needs_update) {
+    if (is.null(timezone)) {
+      timezone <- yaml_data$timezone
+    }
+    dir <- fs::path_dir(path)
+    path_new <- write_thread(thread, token, dir, timezone)
+    # A title changes will lead to a new file name, so we need to delete the previous file
+    file_new <- fs::path_file(path_new)
+    file_original <- fs::path_file(path)
+    if (file_original == file_new) {
+      message("Thread file updated: ", path_new)
+    } else {
+      fs::file_delete(path)
+      message("Thread file updated and renamed: ", path_new)
+    }
+    return(path_new)
+  } else {
+    message("Thread file is already up to date: ", path)
+    return(NULL)
+  }
 }
