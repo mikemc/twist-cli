@@ -58,11 +58,12 @@ write_thread <- function(
   )
   thread_header <- c(
     "---",
-    'title: "{thread$title}"',
-    'author: "{thread$creator_name} ({thread$creator})"',
-    'created: "{posted_time}"',
-    'channel: "{thread$channel_id}"',
+    "title: '{thread$title}'",
+    "author: {thread$creator_name} ({thread$creator})",
+    "created: {posted_time}",
     "thread_id: {thread$id}",
+    "channel_id: {thread$channel_id}",
+    "last_updated_ts: {thread$last_updated_ts}",
     "---"
   ) |> purrr::map_chr(\(x) stringr::str_glue(x, .envir = environment()))
 
