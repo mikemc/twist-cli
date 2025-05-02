@@ -15,4 +15,5 @@ Imports:
     janitor,
     purrr,
     readr,
-    stringr
+    stringr,
+    yaml

@@ -111,3 +111,24 @@ comment_to_string <- function(comment, timezone = "UTC") {
   )
   comment_text
 }
+
+#' Read YAML header from a Markdown file
+#'
+#' @param file Path to the Markdown file
+#'
+#' @return List containing the YAML metadata
+#' @export
+read_yaml_header <- function(file, n_max = 20) {
+  lines <- readr::read_lines(file, n_max = n_max)
+  if (lines[1] == "---") {
+    end_yaml <- which(lines == "---")[2]
+    if (is.na(end_yaml)) {
+      stop("Invalid markdown file format: no closing '---' for YAML header found.")
+    }
+    yaml_content <- lines[2:(end_yaml - 1)]
+    yaml_parsed <- yaml::yaml.load(paste(yaml_content, collapse = "\n"))
+  } else {
+    stop("Invalid markdown file format: no YAML header found.")
+  }
+  yaml_parsed
+}
