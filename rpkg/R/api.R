@@ -40,10 +40,8 @@ twist_token <- function(token = NULL) {
     return(invisible(token))
   }
 
-  # Try to get from options
   token <- getOption("twist_token")
 
-  # If not in options, try environment variable
   if (is.null(token)) {
     token <- Sys.getenv("TWIST_TOKEN")
     if (token != "") {
@@ -54,4 +52,30 @@ twist_token <- function(token = NULL) {
   }
 
   token
+}
+
+#' Set or get the Twist workspace ID
+#'
+#' @param workspace_id Workspace ID to use (optional)
+#'
+#' @return The current workspace ID (invisibly if setting)
+#' @export
+twist_workspace_id <- function(workspace_id = NULL) {
+  if (!is.null(workspace_id)) {
+    options(twist_workspace_id = workspace_id)
+    return(invisible(workspace_id))
+  }
+
+  workspace_id <- getOption("twist_workspace_id")
+
+  if (is.null(workspace_id)) {
+    workspace_id <- Sys.getenv("TWIST_WORKSPACE_ID")
+    if (workspace_id != "") {
+      options(twist_workspace_id = workspace_id)
+    } else {
+      stop("No Twist workspace ID found. Please set it with twist_workspace_id() or the TWIST_WORKSPACE_ID environment variable.")
+    }
+  }
+
+  workspace_id
 }
