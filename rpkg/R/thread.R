@@ -44,7 +44,8 @@ write_thread <- function(
     thread,
     token = twist_token(),
     dir = ".",
-    timezone = "UTC") {
+    timezone = "UTC"
+  ) {
   if (is.numeric(thread) || is.character(thread)) {
     thread <- get_thread(thread, token)
   }
@@ -64,6 +65,7 @@ write_thread <- function(
     "thread_id: {thread$id}",
     "channel_id: {thread$channel_id}",
     "last_updated_ts: {thread$last_updated_ts}",
+    "url: 'https://twist.com/a/{thread$workspace_id}/ch/{thread$channel_id}/t/{thread$id}/'",
     "---"
   ) |> purrr::map_chr(\(x) stringr::str_glue(x, .envir = environment()))
 
