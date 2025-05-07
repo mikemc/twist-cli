@@ -11,13 +11,16 @@ update_thread_file(path, token = twist_token(), force = FALSE, timezone = NULL)
 
 \item{token}{Authentication token}
 
-\item{force}{Logical. Whether to force rewriting even if timestamps indicate no update (default: FALSE)}
+\item{force}{Logical. Whether to force rewriting even if timestamps indicate
+no update (default: FALSE)}
 
-\item{timezone}{Timezone for timestamps; if NULL, use timezone from existing thread file}
+\item{timezone}{Timezone for timestamps; if NULL, use timezone from existing
+thread file}
 }
 \value{
 Path to updated file, or NULL if file not updated
 }
 \description{
-If the thread title has been updated, then the thread file will be renamed to match.
+If the thread title has been updated, then the thread file will be renamed
+to match. If the file doesn't exist, it will be created.
 }

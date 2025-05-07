@@ -138,12 +138,15 @@ read_yaml_header <- function(file, n_max = 20) {
 
 #' Update a thread file if it has been updated in Twist
 #'
-#' If the thread title has been updated, then the thread file will be renamed to match.
+#' If the thread title has been updated, then the thread file will be renamed
+#' to match. If the file doesn't exist, it will be created.
 #'
 #' @param path Path to the thread file
 #' @param token Authentication token
-#' @param force Logical. Whether to force rewriting even if timestamps indicate no update (default: FALSE)
-#' @param timezone Timezone for timestamps; if NULL, use timezone from existing thread file
+#' @param force Logical. Whether to force rewriting even if timestamps indicate
+#'   no update (default: FALSE)
+#' @param timezone Timezone for timestamps; if NULL, use timezone from existing
+#'   thread file
 #'
 #' @return Path to updated file, or NULL if file not updated
 #' @export
@@ -152,7 +155,18 @@ update_thread_file <- function(
     token = twist_token(),
     force = FALSE,
     timezone = NULL) {
-  # Extract required metadata from the file
+  # If the file doesn't already exist, write the thread to file and exit
+  if (!fs::file_exists(path)) {
+    dir <- fs::path_dir(path)
+    file_name <- fs::path_file(path)
+    thread_id <- as.numeric(stringr::str_extract(file_name, "^\\d+"))
+    thread <- get_thread(thread_id, token)
+    path_new <- write_thread(thread, token, dir, timezone = timezone %||% "UTC")
+    message("Thread file created: ", path_new)
+    return(path_new)
+  }
+  # Otherwise, load the thread metadata from the file, determine if we need to
+  # update, and update if necessary
   yaml_data <- read_yaml_header(path)
   thread_id <- yaml_data$thread_id
   local_last_updated_ts <- yaml_data$last_updated_ts
