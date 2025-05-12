@@ -1,6 +1,21 @@
+#' Get a single channel by ID
+#'
+#' @param channel_id ID of the channel
+#' @param token Authentication token
+#'
+#' @return Channel object
+#' @export
+get_channel <- function(channel_id, token = twist_token()) {
+  twist_request(
+    "channels/getone",
+    params = list(id = channel_id),
+    token = token
+  ) |> httr2::resp_body_json()
+}
+
 #' Create a directory name for a channel
 #'
-#' @param thread Channel returned by `get_thread()`
+#' @param channel Channel object
 #'
 #' @return String to use as file name
 channel_dir_name <- function(channel) {

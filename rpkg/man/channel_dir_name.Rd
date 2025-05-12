@@ -7,7 +7,7 @@
 channel_dir_name(channel)
 }
 \arguments{
-\item{thread}{Channel returned by \code{get_thread()}}
+\item{channel}{Channel object}
 }
 \value{
 String to use as file name
