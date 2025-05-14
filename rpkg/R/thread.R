@@ -41,11 +41,11 @@ get_thread_comments <- function(thread_id, token = twist_token()) {
 #' @return Path to the created file
 #' @export
 write_thread <- function(
-    thread,
-    token = twist_token(),
-    dir = ".",
-    timezone = "UTC"
-  ) {
+  thread,
+  token = twist_token(),
+  dir = ".",
+  timezone = "UTC"
+) {
   if (is.numeric(thread) || is.character(thread)) {
     thread <- get_thread(thread, token)
   }
@@ -55,19 +55,26 @@ write_thread <- function(
     thread$posted_ts,
     origin = "1970-01-01",
     tz = timezone
+  ) |>
+    as.character()
+
+  thread_metadata <- list(
+    title = thread$title,
+    author = glue::glue("{thread$creator_name} ({thread$creator})"),
+    created = posted_time,
+    timezone = timezone,
+    thread_id = thread$id,
+    channel_id = thread$channel_id,
+    last_updated_ts = thread$last_updated_ts,
+    url = glue::glue("https://twist.com/a/{thread$workspace_id}/ch/{thread$channel_id}/t/{thread$id}/")
   )
-  thread_header <- c(
-    "---",
-    "title: '{thread$title}'",
-    "author: {thread$creator_name} ({thread$creator})",
-    "created: {posted_time}",
-    "timezone: {timezone}",
-    "thread_id: {thread$id}",
-    "channel_id: {thread$channel_id}",
-    "last_updated_ts: {thread$last_updated_ts}",
-    "url: 'https://twist.com/a/{thread$workspace_id}/ch/{thread$channel_id}/t/{thread$id}/'",
+  # The output of as.yaml already includes a trailing newline character, so we
+  # need to take care to avoid adding an extra newline.
+  thread_header <- stringr::str_c(
+    "---\n",
+    yaml::as.yaml(thread_metadata),
     "---"
-  ) |> purrr::map_chr(\(x) stringr::str_glue(x, .envir = environment()))
+  )
 
   readr::write_lines(thread_header, thread_path)
   readr::write_lines(c("", thread$content), thread_path, append = TRUE)
