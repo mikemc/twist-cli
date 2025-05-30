@@ -75,9 +75,10 @@ write_thread <- function(
     yaml::as.yaml(thread_metadata),
     "---"
   )
+  thread_content_shifted <- shift_markdown_headers(thread$content)
 
   readr::write_lines(thread_header, thread_path)
-  readr::write_lines(c("", thread$content), thread_path, append = TRUE)
+  readr::write_lines(c("", thread_content_shifted), thread_path, append = TRUE)
   for (comment in comments) {
     readr::write_lines(
       c("", comment_to_string(comment, timezone)),
@@ -101,6 +102,43 @@ thread_file_name <- function(thread) {
   stringr::str_glue("{thread$id}_{title_clean}.md")
 }
 
+#' Shift markdown header levels
+#'
+#' Parses markdown content and shifts all header levels by a specified amount.
+#' Headers are capped at H6 (cannot go beyond level 6).
+#'
+#' @param content Character string containing markdown content
+#' @param shift Integer specifying the shift amount (positive shifts down,
+#'   negative shifts up)
+#'
+#' @return Character string with shifted header levels
+shift_markdown_headers <- function(content, shift = 1) {
+  lines <- strsplit(content, "\n", fixed = TRUE)[[1]]
+  in_code_block <- FALSE
+
+  shifted_lines <- purrr::map_chr(lines, function(line) {
+    # Toggle code block state
+    if (grepl("^```", line)) {
+      in_code_block <- !in_code_block
+    }
+
+    # Only process headers outside code blocks
+    if (!in_code_block && grepl("^#{1,6}\\s", line)) {
+      # Extract current header level
+      current_level <- nchar(gsub("^(#{1,6})\\s.*", "\\1", line))
+      new_level <- pmax(1, pmin(current_level + shift, 6))
+
+      # Replace header markers
+      header_text <- gsub("^#{1,6}\\s", "", line)
+      line <- paste0(strrep("#", new_level), " ", header_text)
+    }
+
+    line
+  })
+
+  paste(shifted_lines, collapse = "\n")
+}
+
 #' Convert comment to string
 #'
 #' Get the text representation of a comment for writing to a thread file.
@@ -113,13 +151,13 @@ comment_to_string <- function(comment, timezone = "UTC") {
     origin = "1970-01-01",
     tz = timezone
   )
-  comment_text <- c(
-    "---",
-    stringr::str_glue("*Comment by {comment$creator_name} ({comment$creator}) on {comment_time} (Comment {comment$id})*"),
-    "",
-    comment$content
+  comment_content_shifted <- shift_markdown_headers(comment$content)
+
+  header <- stringr::str_glue(
+    "# Comment by {comment$creator_name} ({comment$creator}) at {comment_time} (Comment {comment$id})"
   )
-  comment_text
+
+  c(header, "", comment_content_shifted)
 }
 
 #' Read YAML header from a Markdown file
