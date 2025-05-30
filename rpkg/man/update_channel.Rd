@@ -7,7 +7,7 @@
 update_channel(
   channel,
   token = twist_token(),
-  workspace_dir = getOption("twist_workspace_dir", "twist-workspace"),
+  workspace_dir = twist_workspace_dir(),
   options = list()
 )
 }

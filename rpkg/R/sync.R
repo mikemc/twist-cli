@@ -17,7 +17,7 @@
 update_workspace <- function(
   workspace_id = twist_workspace_id(),
   token = twist_token(),
-  workspace_dir = getOption("twist_workspace_dir", "twist-workspace"),
+  workspace_dir = twist_workspace_dir(),
   options = list()
 ) {
   # Ensure workspace directory exists
@@ -56,7 +56,7 @@ update_workspace <- function(
 update_channel <- function(
   channel,
   token = twist_token(),
-  workspace_dir = getOption("twist_workspace_dir", "twist-workspace"),
+  workspace_dir = twist_workspace_dir(),
   options = list()
 ) {
   # If channel is an ID, get the channel object

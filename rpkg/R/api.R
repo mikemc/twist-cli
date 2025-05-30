@@ -79,3 +79,29 @@ twist_workspace_id <- function(workspace_id = NULL) {
 
   workspace_id
 }
+
+#' Set or get the Twist workspace directory
+#'
+#' @param workspace_dir Workspace directory to use (optional)
+#'
+#' @return The current workspace directory (invisibly if setting)
+#' @export
+twist_workspace_dir <- function(workspace_dir = NULL) {
+  if (!is.null(workspace_dir)) {
+    options(twist_workspace_dir = workspace_dir)
+    return(invisible(workspace_dir))
+  }
+
+  workspace_dir <- getOption("twist_workspace_dir")
+
+  if (is.null(workspace_dir)) {
+    workspace_dir <- Sys.getenv("TWIST_WORKSPACE_DIR")
+    if (workspace_dir != "") {
+      options(twist_workspace_dir = workspace_dir)
+    } else {
+      stop("No Twist workspace ID found. Please set it with twist_workspace_dir() or the TWIST_WORKSPACE_DIR environment variable.")
+    }
+  }
+
+  workspace_dir
+}

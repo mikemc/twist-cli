@@ -7,7 +7,7 @@
 update_workspace(
   workspace_id = twist_workspace_id(),
   token = twist_token(),
-  workspace_dir = getOption("twist_workspace_dir", "twist-workspace"),
+  workspace_dir = twist_workspace_dir(),
   options = list()
 )
 }
