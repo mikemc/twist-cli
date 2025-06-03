@@ -35,3 +35,192 @@ post_comment <- function(
 
   invisible(httr2::resp_body_json(response))
 }
+
+#' Post a draft comment from a thread file
+#'
+#' Reads a draft comment from the end of a thread file and posts it to the
+#' corresponding Twist thread. Draft comments are indicated by an H1 heading
+#' with the text "DRAFT COMMENT" followed by optional YAML parameters.
+#' Assumes draft comments are located at the end of the file.
+#'
+#' @param file_path Path to the thread markdown file
+#' @param draft_number Which draft to post if multiple exist at end (default: 1, meaning first found)
+#' @param remove_draft Whether to remove the draft section after posting (default: TRUE)
+#' @param dry_run If TRUE, show what would be posted without actually posting (default: FALSE)
+#' @param token Authentication token
+#'
+#' @return The posted comment object (invisible), or preview text if dry_run=TRUE
+#' @export
+post_comment_from_file <- function(
+  file_path,
+  draft_number = 1,
+  remove_draft = TRUE,
+  dry_run = FALSE,
+  token = twist_token()
+) {
+  if (!fs::file_exists(file_path)) {
+    stop("Thread file not found: ", file_path)
+  }
+
+  lines <- readr::read_lines(file_path)
+
+  yaml_header <- read_yaml_header(file_path)
+  thread_id <- yaml_header$thread_id
+
+  if (is.null(thread_id)) {
+    stop("No thread_id found in file header")
+  }
+
+  draft_sections <- find_draft_comments(lines)
+
+  if (length(draft_sections) == 0) {
+    stop("No draft comments found in file")
+  }
+
+  if (draft_number > length(draft_sections)) {
+    stop("Draft comment ", draft_number, " not found. Only ", length(draft_sections), " draft(s) exist.")
+  }
+
+  draft <- parse_draft_comment(lines, draft_sections[[draft_number]])
+
+  if (dry_run) {
+    cat("Would post comment to thread", thread_id, ":\n")
+    cat("Parameters:", yaml::as.yaml(draft$params))
+    cat("Content:\n", draft$content, "\n")
+    return(invisible(draft))
+  }
+
+  # Use do.call to dynamically pass YAML parameters alongside required ones
+  comment_result <- do.call(post_comment, c(
+    list(thread_id = thread_id, content = draft$content, token = token),
+    draft$params
+  ))
+
+  if (remove_draft) {
+    remove_draft_from_file(file_path, draft_sections[[draft_number]])
+    message("Draft comment posted and removed from file")
+  } else {
+    message("Draft comment posted (draft left in file)")
+  }
+
+  invisible(comment_result)
+}
+
+#' Find draft comment sections at the end of file
+#'
+#' @param lines Character vector of file lines
+#'
+#' @return List of draft section info (start_line, end_line)
+find_draft_comments <- function(lines) {
+  # Only look for draft comments, assuming they're all at the end
+  draft_starts <- which(grepl("^# DRAFT COMMENT", lines))
+
+  if (length(draft_starts) == 0) {
+    return(list())
+  }
+
+  sections <- list()
+
+  for (i in seq_along(draft_starts)) {
+    start_line <- draft_starts[i]
+
+    # Each section ends where the next one begins, or at EOF for the last one
+    if (i < length(draft_starts)) {
+      end_line <- draft_starts[i + 1] - 1
+    } else {
+      end_line <- length(lines)
+    }
+
+    sections[[i]] <- list(
+      start_line = start_line,
+      end_line = end_line
+    )
+  }
+
+  sections
+}
+
+#' Parse a single draft comment section
+#'
+#' @param lines Character vector of file lines
+#' @param section Section info from find_draft_comments
+#'
+#' @return List with 'params' and 'content' elements
+parse_draft_comment <- function(lines, section) {
+  section_lines <- lines[section$start_line:section$end_line]
+
+  params <- list()
+  content_start <- 2  # Start after the "# DRAFT COMMENT" line
+
+  # YAML parameters are optional - look for ```yaml code block after header
+  if (length(section_lines) >= 2 && grepl("^```yaml\\s*$", section_lines[2])) {
+    yaml_end <- which(grepl("^```\\s*$", section_lines[3:length(section_lines)]))[1]
+
+    if (!is.na(yaml_end)) {
+      yaml_end <- yaml_end + 2  # Adjust for offset
+      yaml_lines <- section_lines[3:yaml_end-1]
+
+      if (length(yaml_lines) > 0) {
+        yaml_content <- paste(yaml_lines, collapse = "\n")
+        params <- yaml::yaml.load(yaml_content)
+
+        params <- purrr::compact(params)
+
+        # Validate against post_comment() parameters to catch typos early
+        valid_params <- c("recipients", "direct_mentions", "direct_group_mentions",
+                         "groups", "mark_thread_position", "thread_action")
+        invalid_params <- setdiff(names(params), valid_params)
+        if (length(invalid_params) > 0) {
+          warning("Unknown parameters ignored: ", paste(invalid_params, collapse = ", "))
+          params <- params[names(params) %in% valid_params]
+        }
+      }
+
+      content_start <- yaml_end + 1
+    }
+  }
+
+  if (content_start <= length(section_lines)) {
+    content_lines <- section_lines[content_start:length(section_lines)]
+    # Strip leading empty lines but preserve internal structure
+    content_lines <- content_lines[cumsum(content_lines != "") > 0]
+    if (length(content_lines) > 0) {
+      # Clean up trailing whitespace which could cause posting issues
+      while (length(content_lines) > 0 && content_lines[length(content_lines)] == "") {
+        content_lines <- content_lines[-length(content_lines)]
+      }
+    }
+    content <- paste(content_lines, collapse = "\n")
+  } else {
+    content <- ""
+  }
+
+  if (nchar(trimws(content)) == 0) {
+    stop("Draft comment has no content")
+  }
+
+  list(params = params, content = content)
+}
+
+#' Remove a draft section from end of file
+#'
+#' @param file_path Path to the file
+#' @param section Section info from find_draft_comments
+remove_draft_from_file <- function(file_path, section) {
+  lines <- readr::read_lines(file_path)
+
+  # Since drafts are at the end, simply truncate file at draft start
+  if (section$start_line > 1) {
+    new_lines <- lines[1:(section$start_line - 1)]
+  } else {
+    # Entire file is draft content
+    new_lines <- character(0)
+  }
+
+  # Clean up orphaned empty lines that could accumulate over time
+  while (length(new_lines) > 0 && new_lines[length(new_lines)] == "") {
+    new_lines <- new_lines[-length(new_lines)]
+  }
+
+  readr::write_lines(new_lines, file_path)
+}
