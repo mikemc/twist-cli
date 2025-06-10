@@ -1,4 +1,4 @@
-Package: twistdb
+Package: twistr
 Title: Create Local Version of a Twist Workspace
 Version: 0.1.0.9001
 Authors@R:
