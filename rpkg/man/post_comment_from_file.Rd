@@ -29,6 +29,6 @@ The posted comment object (invisible), or preview text if dry_run=TRUE
 \description{
 Reads a draft comment from the end of a thread file and posts it to the
 corresponding Twist thread. Draft comments are indicated by an H1 heading
-with the text "DRAFT COMMENT" followed by optional YAML parameters.
-Assumes draft comments are located at the end of the file.
+with the text "DRAFT COMMENT" (case insensitive) followed by optional YAML
+parameters. Assumes draft comments are located at the end of the file.
 }

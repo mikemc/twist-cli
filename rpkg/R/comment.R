@@ -40,8 +40,8 @@ post_comment <- function(
 #'
 #' Reads a draft comment from the end of a thread file and posts it to the
 #' corresponding Twist thread. Draft comments are indicated by an H1 heading
-#' with the text "DRAFT COMMENT" followed by optional YAML parameters.
-#' Assumes draft comments are located at the end of the file.
+#' with the text "DRAFT COMMENT" (case insensitive) followed by optional YAML
+#' parameters. Assumes draft comments are located at the end of the file.
 #'
 #' @param file_path Path to the thread markdown file
 #' @param draft_number Which draft to post if multiple exist at end (default: 1, meaning first found)
@@ -121,7 +121,7 @@ post_comment_from_file <- function(
 #' @return List of draft section info (start_line, end_line)
 find_draft_comments <- function(lines) {
   # Only look for draft comments, assuming they're all at the end
-  draft_starts <- which(grepl("^# DRAFT COMMENT", lines))
+  draft_starts <- which(grepl("^# DRAFT COMMENT", lines, ignore.case = TRUE))
 
   if (length(draft_starts) == 0) {
     return(list())
