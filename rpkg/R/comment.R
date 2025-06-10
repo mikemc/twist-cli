@@ -45,7 +45,7 @@ post_comment <- function(
 #'
 #' @param file_path Path to the thread markdown file
 #' @param draft_number Which draft to post if multiple exist at end (default: 1, meaning first found)
-#' @param remove_draft Whether to remove the draft section after posting (default: TRUE)
+#' @param update Whether to update the thread file after posting to show the new comment (default: TRUE)
 #' @param dry_run If TRUE, show what would be posted without actually posting (default: FALSE)
 #' @param token Authentication token
 #'
@@ -54,7 +54,7 @@ post_comment <- function(
 post_comment_from_file <- function(
   file_path,
   draft_number = 1,
-  remove_draft = TRUE,
+  update = TRUE,
   dry_run = FALSE,
   token = twist_token()
 ) {
@@ -91,16 +91,24 @@ post_comment_from_file <- function(
   }
 
   # Use do.call to dynamically pass YAML parameters alongside required ones
-  comment_result <- do.call(post_comment, c(
-    list(thread_id = thread_id, content = draft$content, token = token),
-    draft$params
-  ))
+  comment_result <- tryCatch({
+    do.call(post_comment, c(
+      list(thread_id = thread_id, content = draft$content, token = token),
+      draft$params
+    ))
+  }, error = function(e) {
+    stop("Failed to post comment: ", e$message)
+  })
 
-  if (remove_draft) {
-    remove_draft_from_file(file_path, draft_sections[[draft_number]])
-    message("Draft comment posted and removed from file")
+  if (is.null(comment_result) || is.null(comment_result$id)) {
+    stop("Comment posting failed - no comment ID returned")
+  }
+
+  if (update) {
+    update_thread_file(file_path, token = token, force = TRUE)
+    message("Draft comment posted and thread file updated")
   } else {
-    message("Draft comment posted (draft left in file)")
+    message("Draft comment posted (thread file not updated)")
   }
 
   invisible(comment_result)
@@ -200,27 +208,4 @@ parse_draft_comment <- function(lines, section) {
   }
 
   list(params = params, content = content)
-}
-
-#' Remove a draft section from end of file
-#'
-#' @param file_path Path to the file
-#' @param section Section info from find_draft_comments
-remove_draft_from_file <- function(file_path, section) {
-  lines <- readr::read_lines(file_path)
-
-  # Since drafts are at the end, simply truncate file at draft start
-  if (section$start_line > 1) {
-    new_lines <- lines[1:(section$start_line - 1)]
-  } else {
-    # Entire file is draft content
-    new_lines <- character(0)
-  }
-
-  # Clean up orphaned empty lines that could accumulate over time
-  while (length(new_lines) > 0 && new_lines[length(new_lines)] == "") {
-    new_lines <- new_lines[-length(new_lines)]
-  }
-
-  readr::write_lines(new_lines, file_path)
 }

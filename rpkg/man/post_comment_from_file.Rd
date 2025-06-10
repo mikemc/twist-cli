@@ -7,7 +7,7 @@
 post_comment_from_file(
   file_path,
   draft_number = 1,
-  remove_draft = TRUE,
+  update = TRUE,
   dry_run = FALSE,
   token = twist_token()
 )
@@ -17,7 +17,7 @@ post_comment_from_file(
 
 \item{draft_number}{Which draft to post if multiple exist at end (default: 1, meaning first found)}
 
-\item{remove_draft}{Whether to remove the draft section after posting (default: TRUE)}
+\item{update}{Whether to update the thread file after posting to show the new comment (default: TRUE)}
 
 \item{dry_run}{If TRUE, show what would be posted without actually posting (default: FALSE)}
 
