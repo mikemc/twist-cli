@@ -8,6 +8,8 @@ read_yaml_header(file, n_max = 20)
 }
 \arguments{
 \item{file}{Path to the Markdown file}
+
+\item{n_max}{Maximum number of lines from the file to check for YAML content}
 }
 \value{
 List containing the YAML metadata

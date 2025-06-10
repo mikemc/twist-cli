@@ -35,6 +35,7 @@ get_thread_comments <- function(thread_id, token = twist_token()) {
 #' Write a thread to a Markdown file
 #'
 #' @param thread Thread object or ID
+#' @param token Authentication token
 #' @param dir Directory to write the file to (default: current directory)
 #' @param timezone Timezone for timestamps (default: "UTC")
 #'
@@ -163,6 +164,7 @@ comment_to_string <- function(comment, timezone = "UTC") {
 #' Read YAML header from a Markdown file
 #'
 #' @param file Path to the Markdown file
+#' @param n_max Maximum number of lines from the file to check for YAML content
 #'
 #' @return List containing the YAML metadata
 #' @export

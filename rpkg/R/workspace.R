@@ -51,6 +51,6 @@ create_workspace_dirs <- function(
   }
   channels <- get_workspace_channels(workspace_id, token)
   channels_dirs <- channels |> purrr::map_chr(channel_dir_name)
-  purrr::walk(channel_dirs, fs::dir_create)
-  invisible(channel_dirs)
+  purrr::walk(channels_dirs, fs::dir_create)
+  invisible(channels_dirs)
 }

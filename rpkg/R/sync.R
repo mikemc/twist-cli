@@ -127,7 +127,7 @@ handle_channel_directory <- function(channel, workspace_dir) {
     # Directory exists but with different name (channel renamed)
     old_dir <- existing_dirs[1]
     fs::file_move(old_dir, expected_path)
-    message(glue::glue("Channel directory renamed: {fs::path_file(old_dir)} → {expected_dir_name}"))
+    message(glue::glue("Channel directory renamed: {fs::path_file(old_dir)} \u2192 {expected_dir_name}"))
   } else {
     # Directory doesn't exist, create it
     fs::dir_create(expected_path)
