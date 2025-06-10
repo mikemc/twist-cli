@@ -212,16 +212,20 @@ update_thread_file <- function(
     message("Thread file created: ", path_new)
     return(path_new)
   }
-  # Otherwise, load the thread metadata from the file, determine if we need to
-  # update, and update if necessary
-  yaml_data <- read_yaml_header(path)
-  thread_id <- yaml_data$thread_id
-  local_last_updated_ts <- yaml_data$last_updated_ts
-  # Get the current thread data from Twist
+  # Otherwise, determine if we need to update, and update if necessary.
+  # We may as well get the thread object up front, because if force updating,
+  # we'll eventually have to get it, and if not force updating, we need it to
+  # check the timestamp.
   thread <- get_thread(thread_id, token)
-  twist_last_updated_ts <- thread$last_updated_ts
-  # Compare timestamps to see if an update is needed
-  needs_update <- force || (twist_last_updated_ts > local_last_updated_ts)
+  if (force) {
+    needs_update <- TRUE
+  } else {
+    yaml_data <- read_yaml_header(path)
+    thread_id <- yaml_data$thread_id
+    local_last_updated_ts <- yaml_data$last_updated_ts
+    twist_last_updated_ts <- thread$last_updated_ts
+    needs_update <- twist_last_updated_ts > local_last_updated_ts
+  }
 
   if (needs_update) {
     if (is.null(timezone)) {
@@ -229,7 +233,7 @@ update_thread_file <- function(
     }
     dir <- fs::path_dir(path)
     path_new <- write_thread(thread, token, dir, timezone)
-    # A title changes will lead to a new file name, so we need to delete the previous file
+    # A title change will lead to a new file name, so we need to delete the previous file
     file_new <- fs::path_file(path_new)
     file_original <- fs::path_file(path)
     if (file_original == file_new) {
@@ -241,6 +245,6 @@ update_thread_file <- function(
     return(path_new)
   } else {
     message("Thread file is already up to date: ", path)
-    return(NULL)
+    invisible(NULL)
   }
 }

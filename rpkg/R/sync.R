@@ -224,9 +224,9 @@ process_thread <- function(
 
     # Check if file needs update based on timestamp
     if (force || needs_update(thread, existing_file)) {
-      return(update_thread_file(existing_file$path, token, force, timezone))
+      return(update_thread_file(existing_file$path, token, force = TRUE, timezone))
     } else {
-      return(NULL)  # No update needed
+      invisible(NULL)  # No update needed
     }
   } else {
     # New thread, create file
