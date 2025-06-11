@@ -23,13 +23,13 @@ This repository contains tools for working with the [Twist](https://twist.com) t
 
 ## Installation
 
-Install the R package from Github:
+Install the R package from Github,
 
 ```r
 remotes::install_github("mikemc/twist-cli/rpkg")
 ```
 
-Install the R package from a local copy of this repository:
+Or from a local copy of this repository,
 
 ```r
 devtools::install("rpkg/")
@@ -86,6 +86,25 @@ post_comment_from_file("path/to/thread-file.md")
 
 ### Command Line Scripts
 
+Sync your workspace directly from the command line:
+
+```bash
+# Basic workspace sync
+./scripts/update_workspace.R
+
+# Force update all files regardless of timestamps
+./scripts/update_workspace.R TRUE
+
+# Limit to 100 threads per channel with custom timezone
+./scripts/update_workspace.R FALSE 100 'America/New_York'
+
+# Only sync threads newer than a specific timestamp
+./scripts/update_workspace.R FALSE 500 UTC 1640995200
+
+# Get help
+./scripts/update_workspace.R --help
+```
+
 Post draft comments directly from the command line:
 
 ```bash
@@ -106,10 +125,10 @@ Post draft comments directly from the command line:
 
 A typical workflow might look like:
 
-1. **Initial sync**: `update_workspace()` to download all conversations
-2. **Regular updates**: `update_workspace()` periodically to stay current
+1. **Initial sync**: `update_workspace()` or `./scripts/update_workspace.R` to download all conversations
+2. **Regular updates**: Run the same command periodically to stay current
 3. **Local reading and comment drafting**: Read thread markdown files, add draft comments
-4. **Post responses**: Use `post_comment_from_file()` or the command-line script
+4. **Post responses**: Use `post_comment_from_file()` or `./scripts/post_draft.R`
 
 ## Draft Comments
 
@@ -140,3 +159,6 @@ Your comment content here.
 ## License
 
 MIT License - see `rpkg/LICENSE.md` for details.
+
+
+
