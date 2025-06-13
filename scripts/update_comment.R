@@ -4,14 +4,14 @@
 args <- commandArgs(trailingOnly = TRUE)
 
 if (length(args) == 0) {
-  cat("Usage: Rscript post_draft.R <file_path> [dry_run] [update]\n")
+  cat("Usage: Rscript update_comment.R <file_path> [dry_run] [update]\n")
   cat("  file_path    : Path to the thread markdown file (required)\n")
-  cat("  dry_run      : TRUE/FALSE - preview without posting (default: FALSE)\n")
-  cat("  update       : TRUE/FALSE - update file after posting (default: TRUE)\n")
+  cat("  dry_run      : TRUE/FALSE - preview without updating (default: FALSE)\n")
+  cat("  update       : TRUE/FALSE - refresh file after updating (default: TRUE)\n")
   cat("\nExamples:\n")
-  cat("  Rscript post_draft.R thread.md\n")
-  cat("  Rscript post_draft.R thread.md TRUE\n")
-  cat("  Rscript post_draft.R thread.md FALSE TRUE\n")
+  cat("  Rscript update_comment.R thread.md\n")
+  cat("  Rscript update_comment.R thread.md TRUE\n")
+  cat("  Rscript update_comment.R thread.md FALSE TRUE\n")
   quit(status = 1)
 }
 
@@ -31,7 +31,7 @@ if (!file.exists(file_path)) {
 
 # Call the function with error handling
 tryCatch({
-  result <- post_comment_from_file(
+  result <- update_comment_from_file(
     file_path = file_path,
     update = update,
     dry_run = dry_run
@@ -40,7 +40,7 @@ tryCatch({
   if (dry_run) {
     cat("Dry run completed successfully\n")
   } else {
-    cat("Comment posted successfully\n")
+    cat("Comment updated successfully\n")
   }
 }, error = function(e) {
   cat("Error:", e$message, "\n")

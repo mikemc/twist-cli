@@ -6,7 +6,6 @@
 \usage{
 post_comment_from_file(
   file_path,
-  draft_number = 1,
   update = TRUE,
   dry_run = FALSE,
   token = twist_token()
@@ -14,8 +13,6 @@ post_comment_from_file(
 }
 \arguments{
 \item{file_path}{Path to the thread markdown file}
-
-\item{draft_number}{Which draft to post if multiple exist at end (default: 1, meaning first found)}
 
 \item{update}{Whether to update the thread file after posting to show the new comment (default: TRUE)}
 
@@ -28,7 +25,7 @@ The posted comment object (invisible), or preview text if dry_run=TRUE
 }
 \description{
 Reads a draft comment from the end of a thread file and posts it to the
-corresponding Twist thread. Draft comments are indicated by an H1 heading
+corresponding Twist thread. A draft comment is indicated by an H1 heading
 with the text "DRAFT COMMENT" (case insensitive) followed by optional YAML
-parameters. Assumes draft comments are located at the end of the file.
+parameters. Assumes draft comment continues to the end of the file.
 }

@@ -202,12 +202,12 @@ update_thread_file <- function(
     token = twist_token(),
     force = FALSE,
     timezone = NULL) {
+  dir <- fs::path_dir(path)
+  file_name <- fs::path_file(path)
+  thread_id <- as.numeric(stringr::str_extract(file_name, "^\\d+"))
+  thread <- get_thread(thread_id, token)
   # If the file doesn't already exist, write the thread to file and exit
   if (!fs::file_exists(path)) {
-    dir <- fs::path_dir(path)
-    file_name <- fs::path_file(path)
-    thread_id <- as.numeric(stringr::str_extract(file_name, "^\\d+"))
-    thread <- get_thread(thread_id, token)
     path_new <- write_thread(thread, token, dir, timezone = timezone %||% "UTC")
     message("Thread file created: ", path_new)
     return(path_new)
@@ -216,12 +216,13 @@ update_thread_file <- function(
   # We may as well get the thread object up front, because if force updating,
   # we'll eventually have to get it, and if not force updating, we need it to
   # check the timestamp.
-  thread <- get_thread(thread_id, token)
+  yaml_data <- read_yaml_header(path)
+  if (thread_id != yaml_data$thread_id) {
+    stop("Thread id in filename and YAML header don't match.")
+  }
   if (force) {
     needs_update <- TRUE
   } else {
-    yaml_data <- read_yaml_header(path)
-    thread_id <- yaml_data$thread_id
     local_last_updated_ts <- yaml_data$last_updated_ts
     twist_last_updated_ts <- thread$last_updated_ts
     needs_update <- twist_last_updated_ts > local_last_updated_ts
