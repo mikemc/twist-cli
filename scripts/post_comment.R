@@ -4,14 +4,14 @@
 args <- commandArgs(trailingOnly = TRUE)
 
 if (length(args) == 0) {
-  cat("Usage: Rscript post_draft.R <file_path> [dry_run] [update]\n")
+  cat("Usage: post_comment.R <file_path> [dry_run] [update]\n")
   cat("  file_path    : Path to the thread markdown file (required)\n")
   cat("  dry_run      : TRUE/FALSE - preview without posting (default: FALSE)\n")
   cat("  update       : TRUE/FALSE - update file after posting (default: TRUE)\n")
   cat("\nExamples:\n")
-  cat("  Rscript post_draft.R thread.md\n")
-  cat("  Rscript post_draft.R thread.md TRUE\n")
-  cat("  Rscript post_draft.R thread.md FALSE TRUE\n")
+  cat("  post_comment.R thread.md\n")
+  cat("  post_comment.R thread.md TRUE\n")
+  cat("  post_comment.R thread.md FALSE TRUE\n")
   quit(status = 1)
 }
 
