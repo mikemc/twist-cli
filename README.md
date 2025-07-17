@@ -86,7 +86,7 @@ post_comment_from_file("path/to/thread-file.md")
 
 ### Command Line Scripts
 
-Sync your workspace directly from the command line:
+Sync your workspace:
 
 ```bash
 # Basic workspace sync
@@ -105,20 +105,31 @@ Sync your workspace directly from the command line:
 ./scripts/update_workspace.R --help
 ```
 
-Post draft comments directly from the command line:
+Post draft comments:
 
 ```bash
-# Basic usage - post first draft comment in file
-./scripts/post_draft.R path/to/thread.md
+# Basic usage - post draft comment in file
+./scripts/post_comment.R path/to/thread.md
 
 # Preview what would be posted (dry run)
-./scripts/post_draft.R path/to/thread.md TRUE
-
-# Post specific draft number
-./scripts/post_draft.R path/to/thread.md FALSE 2
+./scripts/post_comment.R path/to/thread.md TRUE
 
 # Get help
-./scripts/post_draft.R
+./scripts/post_comment.R
+```
+
+Update comments in existing threads:
+
+```bash
+# Update a comment in a thread
+./scripts/update_comment.R path/to/thread.md
+```
+
+Print thread content to console:
+
+```bash
+# Print thread content to console
+./scripts/print_thread.R 67890
 ```
 
 ## Workflow
@@ -128,7 +139,22 @@ A typical workflow might look like:
 1. **Initial sync**: `update_workspace()` or `./scripts/update_workspace.R` to download all conversations
 2. **Regular updates**: Run the same command periodically to stay current
 3. **Local reading and comment drafting**: Read thread markdown files, add draft comments
-4. **Post responses**: Use `post_comment_from_file()` or `./scripts/post_draft.R`
+4. **Post responses**: Use `post_comment_from_file()` or `./scripts/post_comment.R`
+
+## File Organization
+
+The sync creates a directory structure like:
+
+```
+workspace-directory/
+├── 12345_general/
+│   ├── 67890_welcome-thread.md
+│   └── 67891_another-thread.md
+└── 12346_random/
+    └── 67892_random-discussion.md
+```
+
+Channel directories are named as `{channel_id}_{channel-name}`.
 
 ## Draft Comments
 
@@ -155,6 +181,43 @@ thread_action: close
 Your comment content here.
 ````
 
+## Thread File Format
+
+Thread files are created as markdown with YAML frontmatter containing metadata:
+
+```yaml
+---
+title: "Example Thread Title"
+author: "John Doe (12345)"
+created: "2025-01-15 14:30:00"
+timezone: "UTC"
+thread_id: 67890
+channel_id: 789
+last_updated_ts: 1640995200
+url: "https://twist.com/a/workspace/ch/channel/t/thread/"
+---
+
+# Example Thread Title
+
+Thread content goes here with **markdown** formatting.
+
+# Comment by Jane Smith (67890) at 2025-01-15 15:00:00 (Comment 98765)
+
+Comment content here.
+```
+
+Files are automatically named as `{thread_id}_{clean-title}.md` and organized by channel directories.
+
+## Development
+
+To contribute to this package:
+
+1. Clone the repository
+2. Install development dependencies: `R -e "devtools::install_deps('rpkg/', dependencies = TRUE)"`
+3. Run tests: `R -e "testthat::test_dir('rpkg/tests/testthat')"`
+4. Make changes and submit a pull request
+
+See `CLAUDE.md` for detailed development guidance.
 
 ## License
 
