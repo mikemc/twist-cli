@@ -32,26 +32,23 @@ get_thread_comments <- function(thread_id, token = twist_token()) {
   httr2::resp_body_json(response)
 }
 
-#' Write a thread to a Markdown file
+#' Convert a thread to a markdown string
 #'
 #' @param thread Thread object or ID
 #' @param token Authentication token
-#' @param dir Directory to write the file to (default: current directory)
 #' @param timezone Timezone for timestamps (default: "UTC")
 #'
-#' @return Path to the created file
+#' @return Character string containing the thread as markdown
 #' @export
-write_thread <- function(
+thread_to_string <- function(
   thread,
   token = twist_token(),
-  dir = ".",
   timezone = "UTC"
 ) {
   if (is.numeric(thread) || is.character(thread)) {
     thread <- get_thread(thread, token)
   }
   comments <- get_thread_comments(thread$id, token)
-  thread_path <- fs::path(dir, thread_file_name(thread))
   posted_time <- as.POSIXct(
     thread$posted_ts,
     origin = "1970-01-01",
@@ -78,16 +75,40 @@ write_thread <- function(
   )
   thread_content_shifted <- shift_markdown_headers(thread$content)
 
-  readr::write_lines(thread_header, thread_path)
-  readr::write_lines(c("", thread_content_shifted), thread_path, append = TRUE)
+  # Build the complete markdown content
+  content_parts <- c(thread_header, "", thread_content_shifted)
+  
   for (comment in comments) {
-    readr::write_lines(
-      c("", comment_to_string(comment, timezone)),
-      thread_path,
-      append = TRUE
-    )
+    content_parts <- c(content_parts, "", comment_to_string(comment, timezone))
   }
 
+  paste(content_parts, collapse = "\n")
+}
+
+#' Write a thread to a Markdown file
+#'
+#' @param thread Thread object or ID
+#' @param token Authentication token
+#' @param dir Directory to write the file to (default: current directory)
+#' @param timezone Timezone for timestamps (default: "UTC")
+#'
+#' @return Path to the created file
+#' @export
+write_thread <- function(
+  thread,
+  token = twist_token(),
+  dir = ".",
+  timezone = "UTC"
+) {
+  if (is.numeric(thread) || is.character(thread)) {
+    thread <- get_thread(thread, token)
+  }
+  
+  thread_path <- fs::path(dir, thread_file_name(thread))
+  thread_content <- thread_to_string(thread, token, timezone)
+  
+  readr::write_lines(strsplit(thread_content, "\n", fixed = TRUE)[[1]], thread_path)
+  
   thread_path
 }
 
