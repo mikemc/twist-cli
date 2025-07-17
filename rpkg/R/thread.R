@@ -77,7 +77,7 @@ thread_to_string <- function(
 
   # Build the complete markdown content
   content_parts <- c(thread_header, "", thread_content_shifted)
-  
+
   for (comment in comments) {
     content_parts <- c(content_parts, "", comment_to_string(comment, timezone))
   }
@@ -103,12 +103,12 @@ write_thread <- function(
   if (is.numeric(thread) || is.character(thread)) {
     thread <- get_thread(thread, token)
   }
-  
+
   thread_path <- fs::path(dir, thread_file_name(thread))
   thread_content <- thread_to_string(thread, token, timezone)
-  
+
   readr::write_lines(strsplit(thread_content, "\n", fixed = TRUE)[[1]], thread_path)
-  
+
   thread_path
 }
 

@@ -3,16 +3,16 @@
 args <- commandArgs(trailingOnly = TRUE)
 
 if (length(args) > 0 && args[1] %in% c("-h", "--help", "help")) {
-  cat("Usage: Rscript update_workspace.R [force] [thread_limit] [timezone] [newer_than_ts]\n")
-  cat("  force         : TRUE/FALSE - force update even if no changes detected (default: FALSE)\n")
+  cat("Usage: Rscript sync_workspace.R [force] [thread_limit] [timezone] [newer_than_ts]\n")
+  cat("  force         : TRUE/FALSE - force sync even if no changes detected (default: FALSE)\n")
   cat("  thread_limit  : Maximum threads per channel to process (default: 20)\n")
   cat("  timezone      : Timezone for timestamps (default: UTC)\n")
   cat("  newer_than_ts : Only process threads newer than this Unix timestamp (optional)\n")
   cat("\nExamples:\n")
-  cat("  Rscript update_workspace.R\n")
-  cat("  Rscript update_workspace.R TRUE\n")
-  cat("  Rscript update_workspace.R FALSE 100 'America/New_York'\n")
-  cat("  Rscript update_workspace.R FALSE 20 UTC 1640995200\n")
+  cat("  Rscript sync_workspace.R\n")
+  cat("  Rscript sync_workspace.R TRUE\n")
+  cat("  Rscript sync_workspace.R FALSE 100 'America/New_York'\n")
+  cat("  Rscript sync_workspace.R FALSE 20 UTC 1640995200\n")
   cat("\nNote: Set TWIST_TOKEN, TWIST_WORKSPACE_ID, and TWIST_WORKSPACE_DIR\n")
   cat("      environment variables or configure them in R before running.\n")
   quit(status = 0)
@@ -48,19 +48,19 @@ if (!is.na(timezone)) options$timezone <- timezone
 if (!is.null(newer_than_ts) && !is.na(newer_than_ts)) options$newer_than_ts <- newer_than_ts
 
 tryCatch({
-  cat("Starting workspace update...\n")
+  cat("Starting workspace sync...\n")
 
   if (force) {
-    cat("Force update enabled - will update all files regardless of timestamps\n")
+    cat("Force sync enabled - will sync all files regardless of timestamps\n")
   }
 
   if (!is.null(newer_than_ts)) {
     cat("Only processing threads newer than:", as.POSIXct(newer_than_ts, origin = "1970-01-01"), "\n")
   }
 
-  result <- update_workspace(options = options)
+  result <- sync_workspace(options = options)
 
-  cat("Workspace update completed successfully\n")
+  cat("Workspace sync completed successfully\n")
 
 }, error = function(e) {
   cat("Error:", e$message, "\n")

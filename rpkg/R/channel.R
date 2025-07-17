@@ -69,3 +69,44 @@ get_channel_threads <- function(
   # Parse and return the response
   httr2::resp_body_json(response)
 }
+
+#' Update an existing channel
+#'
+#' @param id Integer. The ID of the channel to update.
+#' @param name Character. The new name of the channel (1-80 Unicode code points).
+#' @param token Character. Authentication token.
+#' @param color Integer. The color of the channel (optional).
+#' @param public Logical. Whether the channel should be public (optional).
+#' @param description Character. The description of the channel (optional).
+#' @param default_groups List of integers. Groups to notify by default (optional).
+#' @param default_recipients List of integers. Users to notify by default (optional).
+#' @param is_favorited Logical. Whether the channel is favorited (optional).
+#' @param icon Integer. The icon of the channel (optional).
+#'
+#' @return Updated channel object from the API
+#' @export
+update_channel <- function(
+  id,
+  name,
+  token = twist_token(),
+  color = NULL,
+  public = NULL,
+  description = NULL,
+  default_groups = NULL,
+  default_recipients = NULL,
+  is_favorited = NULL,
+  icon = NULL
+) {
+  params <- as.list(environment()) |>
+    purrr::discard_at("token") |>
+    purrr::compact()
+
+  response <- twist_request(
+    "channels/update",
+    params = params,
+    token = token,
+    method = "POST"
+  )
+
+  httr2::resp_body_json(response)
+}

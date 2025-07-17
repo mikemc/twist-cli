@@ -1,6 +1,6 @@
 # Workspace-level sync functions
 
-#' Update all channels and threads in a workspace
+#' Sync (update) the local version of a workspace
 #'
 #' @param workspace_id ID of the workspace (default: from twist_workspace_id())
 #' @param token Authentication token (default: from twist_token())
@@ -14,7 +14,7 @@
 #'
 #' @return List of updated thread files
 #' @export
-update_workspace <- function(
+sync_workspace <- function(
   workspace_id = twist_workspace_id(),
   token = twist_token(),
   workspace_dir = twist_workspace_dir(),
@@ -30,7 +30,7 @@ update_workspace <- function(
 
   # Update each channel and collect results
   updated_threads <- purrr::map(channels, function(channel) {
-    update_channel(
+    sync_channel(
       channel = channel,
       token = token,
       workspace_dir = workspace_dir,
@@ -44,16 +44,16 @@ update_workspace <- function(
 
 # Channel-level sync functions
 
-#' Update all threads in a channel
+#' Sync all threads in a channel
 #'
 #' @param channel Channel object or ID
 #' @param token Authentication token
 #' @param workspace_dir Directory containing workspace data
-#' @param options List of options (see update_workspace)
+#' @param options List of options (see sync_workspace)
 #'
 #' @return List of updated thread files
 #' @export
-update_channel <- function(
+sync_channel <- function(
   channel,
   token = twist_token(),
   workspace_dir = twist_workspace_dir(),
@@ -84,8 +84,8 @@ update_channel <- function(
 
   message(glue::glue("Processing channel: {channel$name} (ID: {channel$id})"))
 
-  # Get and update threads
-  updated_threads <- batch_update_threads(
+  # Get and update thread files
+  updated_files <- batch_update_thread_files(
     params = params,
     channel_dir = channel_dir_path,
     token = token,
@@ -94,7 +94,7 @@ update_channel <- function(
     max_threads = thread_limit
   )
 
-  invisible(updated_threads)
+  invisible(updated_files)
 }
 
 # Helper functions (not exported)
@@ -137,7 +137,7 @@ handle_channel_directory <- function(channel, workspace_dir) {
   expected_path
 }
 
-#' Update threads in batches to minimize API requests
+#' Update thread files in batches to minimize API requests
 #'
 #' @param params List of parameters for get_channel_threads
 #' @param channel_dir Directory for channel files
@@ -147,7 +147,7 @@ handle_channel_directory <- function(channel, workspace_dir) {
 #' @param max_threads Maximum number of threads to process
 #'
 #' @return List of updated thread file paths
-batch_update_threads <- function(
+batch_update_thread_files <- function(
   params,
   channel_dir,
   token,

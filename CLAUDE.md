@@ -60,7 +60,7 @@ Avoid restating what the code obviously does. Use clear naming instead.
 - `README.md` - User documentation, installation, and basic usage
 - `rpkg/DESCRIPTION` - Package metadata and dependencies
 - `rpkg/R/api.R` - Authentication and HTTP client functions
-- `rpkg/R/sync.R` - High-level sync operations (`update_workspace`, `update_channel`)
+- `rpkg/R/sync.R` - High-level sync operations (`sync_workspace`, `sync_channel`)
 - `rpkg/tests/testthat/` - Test suite
 - `scripts/` - Command-line utilities for end users
 - `dev/` - Development workspace with test data

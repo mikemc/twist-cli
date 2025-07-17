@@ -72,10 +72,10 @@ export TWIST_WORKSPACE_DIR="path/to/your/workspace/directory"
 library(twistr)
 
 # Sync entire workspace to local files
-update_workspace()
+sync_workspace()
 
 # Sync specific channel
-update_channel(channel_id = 12345)
+sync_channel(channel_id = 12345)
 
 # Create a markdown file for a specific thread
 write_thread(thread_id = 67890, dir = "my-threads/")
@@ -90,19 +90,19 @@ Sync your workspace:
 
 ```bash
 # Basic workspace sync
-./scripts/update_workspace.R
+./scripts/sync_workspace.R
 
-# Force update all files regardless of timestamps
-./scripts/update_workspace.R TRUE
+# Force sync all files regardless of timestamps
+./scripts/sync_workspace.R TRUE
 
 # Limit to 100 threads per channel with custom timezone
-./scripts/update_workspace.R FALSE 100 'America/New_York'
+./scripts/sync_workspace.R FALSE 100 'America/New_York'
 
 # Only sync threads newer than a specific timestamp
-./scripts/update_workspace.R FALSE 500 UTC 1640995200
+./scripts/sync_workspace.R FALSE 500 UTC 1640995200
 
 # Get help
-./scripts/update_workspace.R --help
+./scripts/sync_workspace.R --help
 ```
 
 Post draft comments:
@@ -136,7 +136,7 @@ Print thread content to console:
 
 A typical workflow might look like:
 
-1. **Initial sync**: `update_workspace()` or `./scripts/update_workspace.R` to download all conversations
+1. **Initial sync**: `sync_workspace()` or `./scripts/sync_workspace.R` to download all conversations
 2. **Regular updates**: Run the same command periodically to stay current
 3. **Local reading and comment drafting**: Read thread markdown files, add draft comments
 4. **Post responses**: Use `post_comment_from_file()` or `./scripts/post_comment.R`
