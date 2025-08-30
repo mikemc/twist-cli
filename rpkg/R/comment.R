@@ -1,8 +1,8 @@
 #' Post a comment to a thread
 #'
+#' @inheritParams defaults
 #' @param thread_id ID of the thread to comment on
 #' @param content Content of the comment (supports Markdown)
-#' @param token Authentication token
 #' @param recipients Users to notify. Can be a list of user IDs, "EVERYONE",
 #'   or "EVERYONE_IN_THREAD" (default: "EVERYONE_IN_THREAD")
 #' @param direct_mentions List of user IDs that are directly mentioned
@@ -45,10 +45,10 @@ post_comment <- function(
 #' with the text "DRAFT COMMENT" (case insensitive) followed by optional YAML
 #' parameters. Assumes draft comment continues to the end of the file.
 #'
+#' @inheritParams defaults
 #' @param file_path Path to the thread markdown file
 #' @param update Whether to update the thread file after posting to show the new comment (default: TRUE)
 #' @param dry_run If TRUE, show what would be posted without actually posting (default: FALSE)
-#' @param token Authentication token
 #'
 #' @return The posted comment object (invisible), or preview text if dry_run=TRUE
 #' @export
@@ -120,9 +120,9 @@ post_comment_from_file <- function(
 
 #' Update an existing comment in Twist
 #'
+#' @inheritParams defaults
 #' @param id ID of the comment to update
 #' @param content New content for the comment (supports Markdown)
-#' @param token Authentication token
 #' @param direct_mentions List of user IDs that are directly mentioned
 #' @param direct_group_mentions List of group IDs that are directly mentioned
 #'
@@ -157,10 +157,10 @@ update_comment <- function(
 #' parameters including the comment id. Assumes edited comment continues to
 #' the end of the file.
 #'
+#' @inheritParams defaults
 #' @param file_path Path to the thread markdown file
 #' @param update Whether to update the thread file after editing (default: TRUE)
 #' @param dry_run If TRUE, show what would be updated without actually updating (default: FALSE)
-#' @param token Authentication token
 #'
 #' @return The updated comment object (invisible), or preview text if dry_run=TRUE
 #' @export

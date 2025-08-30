@@ -18,7 +18,7 @@ update_comment_from_file(
 
 \item{dry_run}{If TRUE, show what would be updated without actually updating (default: FALSE)}
 
-\item{token}{Authentication token}
+\item{token}{Authentication token (default: from twist_token())}
 }
 \value{
 The updated comment object (invisible), or preview text if dry_run=TRUE

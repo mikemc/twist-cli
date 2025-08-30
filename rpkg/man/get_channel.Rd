@@ -9,7 +9,7 @@ get_channel(channel_id, token = twist_token())
 \arguments{
 \item{channel_id}{ID of the channel}
 
-\item{token}{Authentication token}
+\item{token}{Authentication token (default: from twist_token())}
 }
 \value{
 Channel object

@@ -2,9 +2,7 @@
 
 #' Sync (update) the local version of a workspace
 #'
-#' @param workspace_id ID of the workspace (default: from twist_workspace_id())
-#' @param token Authentication token (default: from twist_token())
-#' @param workspace_dir Directory to store workspace data
+#' @inheritParams defaults
 #' @param options List of update options:
 #'   - thread_limit: Maximum number of threads to process per channel
 #'   - newer_than_ts: Only process threads newer than this timestamp
@@ -46,9 +44,8 @@ sync_workspace <- function(
 
 #' Sync all threads in a channel
 #'
+#' @inheritParams defaults
 #' @param channel Channel object or ID
-#' @param token Authentication token
-#' @param workspace_dir Directory containing workspace data
 #' @param options List of options (see sync_workspace)
 #'
 #' @return List of updated thread files

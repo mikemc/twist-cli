@@ -17,7 +17,7 @@ update_comment(
 
 \item{content}{New content for the comment (supports Markdown)}
 
-\item{token}{Authentication token}
+\item{token}{Authentication token (default: from twist_token())}
 
 \item{direct_mentions}{List of user IDs that are directly mentioned}
 

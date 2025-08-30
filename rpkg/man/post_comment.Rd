@@ -21,7 +21,7 @@ post_comment(
 
 \item{content}{Content of the comment (supports Markdown)}
 
-\item{token}{Authentication token}
+\item{token}{Authentication token (default: from twist_token())}
 
 \item{recipients}{Users to notify. Can be a list of user IDs, "EVERYONE",
 or "EVERYONE_IN_THREAD" (default: "EVERYONE_IN_THREAD")}

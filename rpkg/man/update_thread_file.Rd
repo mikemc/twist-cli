@@ -9,7 +9,7 @@ update_thread_file(path, token = twist_token(), force = FALSE, timezone = NULL)
 \arguments{
 \item{path}{Path to the thread file}
 
-\item{token}{Authentication token}
+\item{token}{Authentication token (default: from twist_token())}
 
 \item{force}{Logical. Whether to force rewriting even if timestamps indicate
 no update (default: FALSE)}

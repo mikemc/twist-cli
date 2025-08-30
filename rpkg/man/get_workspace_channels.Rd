@@ -4,12 +4,16 @@
 \alias{get_workspace_channels}
 \title{Get all channels in a workspace}
 \usage{
-get_workspace_channels(workspace_id, token = twist_token(), archived = FALSE)
+get_workspace_channels(
+  workspace_id = twist_workspace_id(),
+  token = twist_token(),
+  archived = FALSE
+)
 }
 \arguments{
-\item{workspace_id}{ID of the workspace}
+\item{workspace_id}{ID of the workspace (default: from twist_workspace_id())}
 
-\item{token}{Authentication token}
+\item{token}{Authentication token (default: from twist_token())}
 
 \item{archived}{Whether to include archived channels (default: FALSE)}
 }

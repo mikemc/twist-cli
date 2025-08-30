@@ -9,7 +9,7 @@ thread_to_string(thread, token = twist_token(), timezone = "UTC")
 \arguments{
 \item{thread}{Thread object or ID}
 
-\item{token}{Authentication token}
+\item{token}{Authentication token (default: from twist_token())}
 
 \item{timezone}{Timezone for timestamps (default: "UTC")}
 }

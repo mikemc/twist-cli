@@ -5,17 +5,18 @@
 \title{Create directory structure for workspace}
 \usage{
 create_workspace_dirs(
-  workspace_id,
+  workspace_id = twist_workspace_id(),
   token = twist_token(),
-  workspace_dir = "twist-workspace"
+  workspace_dir = twist_workspace_dir()
 )
 }
 \arguments{
-\item{workspace_id}{ID of the workspace}
+\item{workspace_id}{ID of the workspace (default: from twist_workspace_id())}
 
-\item{token}{Authentication token}
+\item{token}{Authentication token (default: from twist_token())}
 
-\item{workspace_dir}{Directory to create the workspace structure in}
+\item{workspace_dir}{Directory to store workspace data (default: from
+twist_workspace_dir())}
 }
 \value{
 Vector of created directory paths

@@ -9,7 +9,7 @@ write_thread(thread, token = twist_token(), dir = ".", timezone = "UTC")
 \arguments{
 \item{thread}{Thread object or ID}
 
-\item{token}{Authentication token}
+\item{token}{Authentication token (default: from twist_token())}
 
 \item{dir}{Directory to write the file to (default: current directory)}
 

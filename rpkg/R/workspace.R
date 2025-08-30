@@ -2,14 +2,13 @@
 
 #' Get all channels in a workspace
 #'
-#' @param workspace_id ID of the workspace
-#' @param token Authentication token
+#' @inheritParams defaults
 #' @param archived Whether to include archived channels (default: FALSE)
 #'
 #' @return List of channels
 #' @export
 get_workspace_channels <- function(
-  workspace_id,
+  workspace_id = twist_workspace_id(),
   token = twist_token(),
   archived = FALSE
 ) {
@@ -36,16 +35,15 @@ get_workspace_channels <- function(
 #' Creates a directory for each channel in the workspace and returns the
 #' created paths.
 #'
-#' @param workspace_id ID of the workspace
-#' @param token Authentication token
-#' @param workspace_dir Directory to create the workspace structure in
+#' @inheritParams defaults
 #'
 #' @return Vector of created directory paths
 #' @export
 create_workspace_dirs <- function(
-    workspace_id,
-    token = twist_token(),
-    workspace_dir = "twist-workspace") {
+  workspace_id = twist_workspace_id(),
+  token = twist_token(),
+  workspace_dir = twist_workspace_dir()
+) {
   if (!fs::dir_exists(workspace_dir)) {
     fs::dir_create(workspace_dir)
   }

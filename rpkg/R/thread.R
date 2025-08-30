@@ -2,8 +2,8 @@
 
 #' Get a single thread by ID
 #'
+#' @inheritParams defaults
 #' @param thread_id ID of the thread
-#' @param token Authentication token
 #'
 #' @return Thread as a list
 #' @export
@@ -18,8 +18,8 @@ get_thread <- function(thread_id, token = twist_token()) {
 
 #' Get comments for a thread
 #'
+#' @inheritParams defaults
 #' @param thread_id ID of the thread
-#' @param token Authentication token
 #'
 #' @return List of comments
 #' @export
@@ -34,8 +34,8 @@ get_thread_comments <- function(thread_id, token = twist_token()) {
 
 #' Convert a thread to a markdown string
 #'
+#' @inheritParams defaults
 #' @param thread Thread object or ID
-#' @param token Authentication token
 #' @param timezone Timezone for timestamps (default: "UTC")
 #'
 #' @return Character string containing the thread as markdown
@@ -87,8 +87,8 @@ thread_to_string <- function(
 
 #' Write a thread to a Markdown file
 #'
+#' @inheritParams defaults
 #' @param thread Thread object or ID
-#' @param token Authentication token
 #' @param dir Directory to write the file to (default: current directory)
 #' @param timezone Timezone for timestamps (default: "UTC")
 #'
@@ -209,8 +209,8 @@ read_yaml_header <- function(file, n_max = 20) {
 #' If the thread title has been updated, then the thread file will be renamed
 #' to match. If the file doesn't exist, it will be created.
 #'
+#' @inheritParams defaults
 #' @param path Path to the thread file
-#' @param token Authentication token
 #' @param force Logical. Whether to force rewriting even if timestamps indicate
 #'   no update (default: FALSE)
 #' @param timezone Timezone for timestamps; if NULL, use timezone from existing

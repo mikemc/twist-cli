@@ -22,7 +22,7 @@ update_channel(
 
 \item{name}{Character. The new name of the channel (1-80 Unicode code points).}
 
-\item{token}{Character. Authentication token.}
+\item{token}{Authentication token (default: from twist_token())}
 
 \item{color}{Integer. The color of the channel (optional).}
 

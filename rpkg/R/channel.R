@@ -1,7 +1,7 @@
 #' Get a single channel by ID
 #'
+#' @inheritParams defaults
 #' @param channel_id ID of the channel
-#' @param token Authentication token
 #'
 #' @return Channel object
 #' @export
@@ -27,8 +27,8 @@ channel_dir_name <- function(channel) {
 
 #' Get threads in a channel
 #'
+#' @inheritParams defaults
 #' @param channel_id Integer. The ID of the channel.
-#' @param token Character. Authentication token.
 #' @param as_ids Logical. If TRUE, only the IDs of the threads are returned. Default is FALSE.
 #' @param filter_by Character. A filter can be one of "attached_to_me" or "everyone". Default is "everyone".
 #' @param limit Integer. Limits the number of threads returned. Default is 20, maximum is 500.
@@ -60,21 +60,16 @@ get_channel_threads <- function(
   order_by = NULL,
   exclude_thread_ids = NULL
 ) {
-  # Get a named list of parameters to pass to the 'threads/get' API call
   params <- purrr::compact(as.list(environment())[-2])
-
-  # Make a single request to the API
   response <- twist_request("v3/threads/get", params = params, token = token)
-
-  # Parse and return the response
   httr2::resp_body_json(response)
 }
 
 #' Update an existing channel
 #'
+#' @inheritParams defaults
 #' @param id Integer. The ID of the channel to update.
 #' @param name Character. The new name of the channel (1-80 Unicode code points).
-#' @param token Character. Authentication token.
 #' @param color Integer. The color of the channel (optional).
 #' @param public Logical. Whether the channel should be public (optional).
 #' @param description Character. The description of the channel (optional).
@@ -100,13 +95,11 @@ update_channel <- function(
   params <- as.list(environment()) |>
     purrr::discard_at("token") |>
     purrr::compact()
-
   response <- twist_request(
     "v3/channels/update",
     params = params,
     token = token,
     method = "POST"
   )
-
   httr2::resp_body_json(response)
 }

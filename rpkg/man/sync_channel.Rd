@@ -14,9 +14,10 @@ sync_channel(
 \arguments{
 \item{channel}{Channel object or ID}
 
-\item{token}{Authentication token}
+\item{token}{Authentication token (default: from twist_token())}
 
-\item{workspace_dir}{Directory containing workspace data}
+\item{workspace_dir}{Directory to store workspace data (default: from
+twist_workspace_dir())}
 
 \item{options}{List of options (see sync_workspace)}
 }

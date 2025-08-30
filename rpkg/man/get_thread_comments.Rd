@@ -9,7 +9,7 @@ get_thread_comments(thread_id, token = twist_token())
 \arguments{
 \item{thread_id}{ID of the thread}
 
-\item{token}{Authentication token}
+\item{token}{Authentication token (default: from twist_token())}
 }
 \value{
 List of comments

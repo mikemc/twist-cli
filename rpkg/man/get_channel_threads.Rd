@@ -24,7 +24,7 @@ get_channel_threads(
 \arguments{
 \item{channel_id}{Integer. The ID of the channel.}
 
-\item{token}{Character. Authentication token.}
+\item{token}{Authentication token (default: from twist_token())}
 
 \item{as_ids}{Logical. If TRUE, only the IDs of the threads are returned. Default is FALSE.}
 
