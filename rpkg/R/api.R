@@ -1,6 +1,10 @@
 #' Make API request to Twist
 #'
-#' @param endpoint API endpoint to call (without the base URL)
+#' The supplied endpoint is appended to the base url
+#' "https://api.twist.com/api/". The endpoint must start with a specific
+#' version prefix like "v3/" or "v4/".
+#'
+#' @param API endpoint to call
 #' @param params List of parameters to include in the request
 #' @param token Authentication token
 #' @param method HTTP method to use (default: "GET")
@@ -12,7 +16,7 @@ twist_request <- function(
   params = list(),
   token = twist_token(),
   method = "GET") {
-  base_url <- "https://api.twist.com/api/v3/"
+  base_url <- "https://api.twist.com/api/"
 
   req <- httr2::request(base_url) |>
     httr2::req_url_path_append(endpoint) |>

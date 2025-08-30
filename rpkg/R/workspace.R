@@ -14,7 +14,7 @@ get_workspace_channels <- function(
   archived = FALSE
 ) {
   response <- twist_request(
-    "channels/get",
+    "v3/channels/get",
     params = list(workspace_id = workspace_id),
     token = token
   )

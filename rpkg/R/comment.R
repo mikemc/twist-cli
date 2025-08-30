@@ -29,7 +29,7 @@ post_comment <- function(
     purrr::compact()
 
   response <- twist_request(
-    "comments/add",
+    "v3/comments/add",
     params = params,
     token = token,
     method = "POST"
@@ -140,7 +140,7 @@ update_comment <- function(
     purrr::compact()
 
   response <- twist_request(
-    "comments/update",
+    "v3/comments/update",
     params = params,
     token = token,
     method = "POST"

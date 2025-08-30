@@ -9,7 +9,7 @@
 #' @export
 get_thread <- function(thread_id, token = twist_token()) {
   response <- twist_request(
-    "threads/getone",
+    "v3/threads/getone",
     params = list(id = thread_id),
     token = token
   )
@@ -25,7 +25,7 @@ get_thread <- function(thread_id, token = twist_token()) {
 #' @export
 get_thread_comments <- function(thread_id, token = twist_token()) {
   response <- twist_request(
-    "comments/get",
+    "v3/comments/get",
     params = list(thread_id = thread_id),
     token = token
   )

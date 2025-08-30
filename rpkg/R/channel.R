@@ -7,7 +7,7 @@
 #' @export
 get_channel <- function(channel_id, token = twist_token()) {
   twist_request(
-    "channels/getone",
+    "v3/channels/getone",
     params = list(id = channel_id),
     token = token
   ) |> httr2::resp_body_json()
@@ -64,7 +64,7 @@ get_channel_threads <- function(
   params <- purrr::compact(as.list(environment())[-2])
 
   # Make a single request to the API
-  response <- twist_request("threads/get", params = params, token = token)
+  response <- twist_request("v3/threads/get", params = params, token = token)
 
   # Parse and return the response
   httr2::resp_body_json(response)
@@ -102,7 +102,7 @@ update_channel <- function(
     purrr::compact()
 
   response <- twist_request(
-    "channels/update",
+    "v3/channels/update",
     params = params,
     token = token,
     method = "POST"
